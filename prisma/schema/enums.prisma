@@ -1,0 +1,31 @@
+// Shared enums used across the schema
+
+enum Role {
+  CUSTOMER
+  TRADER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingChannel {
+  WEB
+  WHATSAPP
+}
+
+enum MessageChannel {
+  WEB
+  WHATSAPP
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}

@@ -1,0 +1,52 @@
+// User domain: User, TraderProfile, WorkArea
+
+model User {
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  phone    String? @unique
+  password String?
+  role     Role    @default(CUSTOMER)
+
+  traderProfile      TraderProfile?
+  bookingsAsCustomer Booking[]      @relation("CustomerBookings")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TraderProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  businessName String?
+  description  String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  workAreas WorkArea[]
+  bookings  Booking[]
+
+  stripeAccountId          String?
+  stripeOnboardingComplete Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkArea {
+  id       String @id @default(cuid())
+  traderId String
+
+  date DateTime
+  area String
+
+  startTime String
+  endTime   String
+
+  trader TraderProfile @relation(fields: [traderId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([traderId, date])
+}

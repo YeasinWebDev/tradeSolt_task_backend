@@ -1,0 +1,56 @@
+// Booking domain: Booking, Message
+
+model Booking {
+  id String @id @default(cuid())
+
+  customerId String
+  traderId   String
+
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime
+
+  status  BookingStatus  @default(PENDING_PAYMENT)
+  channel BookingChannel
+
+  serviceName     String?
+  customerAddress String?
+
+  price       Int
+  platformFee Int
+
+  customer User          @relation("CustomerBookings", fields: [customerId], references: [id])
+  trader   TraderProfile @relation(fields: [traderId], references: [id])
+
+  messages Message[]
+  payment  Payment?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([traderId, date])
+  @@index([customerId])
+}
+
+model Message {
+  id String @id @default(cuid())
+
+  bookingId String?
+  senderId  String?
+
+  channel MessageChannel
+
+  externalMessageId String?
+  senderExternalId  String?
+
+  content String
+
+  metadata Json?
+
+  booking Booking? @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([bookingId])
+  @@index([senderExternalId])
+}

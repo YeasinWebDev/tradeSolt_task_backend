@@ -1,0 +1,20 @@
+// Payment domain: Payment
+
+model Payment {
+  id String @id @default(cuid())
+
+  bookingId String @unique
+
+  stripePaymentIntentId   String?
+  stripeCheckoutSessionId String?
+
+  amount      Int
+  platformFee Int
+
+  status PaymentStatus @default(PENDING)
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
