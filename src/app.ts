@@ -5,6 +5,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import { errorHandler, notFound } from "./middlewares/errorHandler";
+import authRoutes from "./routes/auth.route";
+import { TraderRoutes } from "./routes/trader.route";
 
 const app: Application = express();
 
@@ -31,8 +33,8 @@ app.get("/health", (_req: Request, res: Response) => {
 });
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-// import userRoutes from "./routes/user.routes";
-// app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/trader", TraderRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────────
 app.use(notFound);
