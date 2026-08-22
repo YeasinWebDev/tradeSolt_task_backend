@@ -23,6 +23,11 @@ enum MessageChannel {
   WHATSAPP
 }
 
+enum MessageSenderRole {
+  CUSTOMER
+  ASSISTANT
+}
+
 enum PaymentStatus {
   PENDING
   SUCCEEDED

@@ -7,6 +7,8 @@ import morgan from "morgan";
 import { errorHandler, notFound } from "./middlewares/errorHandler";
 import authRoutes from "./routes/auth.route";
 import { TraderRoutes } from "./routes/trader.route";
+import { chatModuleRoutes } from "./routes/chat.routes";
+import { whatsappModuleRoutes } from "./routes/whatsapp.routes";
 
 const app: Application = express();
 
@@ -35,6 +37,10 @@ app.get("/health", (_req: Request, res: Response) => {
 // ─── API Routes ───────────────────────────────────────────────────────────────
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/trader", TraderRoutes);
+
+// Modular Chat & WhatsApp Routes
+app.use("/api/v1/chat", chatModuleRoutes);
+app.use("/api/v1/webhooks/whatsapp", whatsappModuleRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────────
 app.use(notFound);

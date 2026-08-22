@@ -1,0 +1,15 @@
+// Chat domain: Conversation
+// Groups chat messages from the same customer/channel session before a booking exists.
+
+model Conversation {
+  id         String         @id @default(cuid())
+  customerId String
+  channel    MessageChannel @default(WEB)
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId, channel])
+}

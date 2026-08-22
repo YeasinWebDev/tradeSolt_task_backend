@@ -35,8 +35,10 @@ model Booking {
 model Message {
   id String @id @default(cuid())
 
-  bookingId String?
-  senderId  String?
+  bookingId      String?
+  conversationId String?
+  senderId       String?
+  senderRole     MessageSenderRole?
 
   channel MessageChannel
 
@@ -47,10 +49,12 @@ model Message {
 
   metadata Json?
 
-  booking Booking? @relation(fields: [bookingId], references: [id])
+  booking      Booking?      @relation(fields: [bookingId], references: [id])
+  conversation Conversation? @relation(fields: [conversationId], references: [id])
 
   createdAt DateTime @default(now())
 
   @@index([bookingId])
+  @@index([conversationId])
   @@index([senderExternalId])
 }
