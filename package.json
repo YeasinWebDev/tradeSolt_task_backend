@@ -7,6 +7,7 @@
     "dev": "nodemon --watch src --ext ts --exec tsx src/server.ts",
     "build": "prisma generate --schema=prisma/schema && tsc",
     "start": "node dist/server.js",
+    "postinstall": "prisma generate --schema=prisma/schema",
     "prisma:generate": "prisma generate --schema=prisma/schema",
     "prisma:migrate": "prisma migrate dev --schema=prisma/schema",
     "prisma:studio": "prisma studio --schema=prisma/schema",
