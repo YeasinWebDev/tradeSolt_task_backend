@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma";
 import { checkTraderAvailability } from "./scheduling.service";
 import { parseBookingIntentWithAI, ParsedBookingIntent } from "./ai.service";
+import { createCheckoutSessionService } from "./payment.service";
 
 // Simple Normalized Message Input used by BOTH Web Chat and WhatsApp
 export type MessageInput = {
@@ -97,10 +98,44 @@ export const processBookingRequest = async (input: MessageInput) => {
     },
   });
 
+  // 5. Generate a Stripe Checkout payment link for the new booking.
+  //    Gracefully degrades: if Stripe isn't configured (no STRIPE_SECRET_KEY)
+  //    or the sender isn't a real registered customer, the booking is still
+  //    created and the caller simply receives no payment link.
+  let paymentLink: string | null = null;
+  try {
+    const checkout = await createCheckoutSessionService(customerId, booking.id);
+    paymentLink = checkout.url;
+  } catch (err) {
+    console.error("[Booking] Failed to create payment link:", err);
+  }
+
   return {
     success: true,
     bookingId: booking.id,
+    paymentLink, // Stripe Checkout URL — the customer pays here to confirm
     parsedData: parsedAI, // Returns structured AI output { intent, service, date, time, location }
-    replyText: `Great news! I have reserved a ${serviceName} slot in ${location} on ${dateStr} at ${timeStr} via ${channel}. Booking ID: ${booking.id}. Please complete payment to confirm.`,
+    replyText: `Great news! I have reserved a ${serviceName} slot in ${location} on ${dateStr} at ${timeStr} via ${channel}. Booking ID: ${booking.id}.${
+      paymentLink ? ` Please complete payment using this link to confirm` : " Payment link is being prepared — our team will contact you shortly."
+    }`,
   };
+};
+
+
+export const getMyBookingsService = async (customerId: string) => {
+  return await prisma.booking.findMany({
+    where: { customerId },
+    include: {
+      trader: {
+        select: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      payment:true,
+    },
+  });
 };

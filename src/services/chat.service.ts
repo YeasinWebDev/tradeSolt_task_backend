@@ -59,6 +59,7 @@ export const handleWebChatMessage = async (customerId: string, rawMessage: strin
     conversationId: conversation.id,
     reply: botMessage.content,
     bookingId: bookingResult.bookingId,
+    paymentLink: bookingResult.paymentLink ?? null,
     success: bookingResult.success,
   };
 };

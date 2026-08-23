@@ -9,6 +9,9 @@ import authRoutes from "./routes/auth.route";
 import { TraderRoutes } from "./routes/trader.route";
 import { chatModuleRoutes } from "./routes/chat.routes";
 import { whatsappModuleRoutes } from "./routes/whatsapp.routes";
+import { paymentModuleRoutes } from "./routes/payment.route";
+import { stripeWebhookRoutes } from "./routes/stripe.webhook.route";
+import { bookingRoutes } from "./routes/booking.route";
 
 const app: Application = express();
 
@@ -21,6 +24,11 @@ app.use(
   })
 );
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
+
+// Stripe webhooks need the RAW request body to verify the Stripe-Signature
+// header — register before the global JSON body parser.
+app.use("/api/v1/webhooks/stripe", stripeWebhookRoutes);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,6 +49,12 @@ app.use("/api/v1/trader", TraderRoutes);
 // Modular Chat & WhatsApp Routes
 app.use("/api/v1/chat", chatModuleRoutes);
 app.use("/api/v1/webhooks/whatsapp", whatsappModuleRoutes);
+
+// Stripe Payments
+app.use("/api/v1/payments", paymentModuleRoutes);
+
+// Booking routes
+app.use("/api/v1/bookings", bookingRoutes);
 
 // ─── 404 & Error Handlers ─────────────────────────────────────────────────────
 app.use(notFound);

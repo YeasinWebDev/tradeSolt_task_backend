@@ -4,6 +4,7 @@ import { createWorkAreaSchema, updateTraderProfileSchema, updateWorkAreaSchema }
 import { ZodError } from "zod";
 import { AppError } from "../utils/AppError";
 import { createWorkAreaService, getTraderProfileService, updateTraderProfileService, updateWorkAreaService } from "../services/Trader.service";
+import { getTraderConnectStatusService, getTraderConnectUrlService } from "../services/stripeConnect.service";
 
 export const getTraderProfile = async (
   req: Request,
@@ -129,6 +130,54 @@ export const updateWorkArea = async (
       error.errors = formatted;
       return next(error);
     }
+    next(err);
+  }
+};
+
+// ─── Stripe Connect Onboarding ────────────────────────────────────────────────
+
+export const connectStripeAccount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = (req as Request & { user?: { userId: string } }).user?.userId;
+    if (!userId) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const data = await getTraderConnectUrlService(userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Stripe Connect onboarding link generated",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getStripeConnectStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = (req as Request & { user?: { userId: string } }).user?.userId;
+    if (!userId) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const data = await getTraderConnectStatusService(userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Stripe Connect status retrieved",
+      data,
+    });
+  } catch (err) {
     next(err);
   }
 };
