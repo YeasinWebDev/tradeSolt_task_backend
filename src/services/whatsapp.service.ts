@@ -23,6 +23,7 @@ export const handleWhatsAppWebhookMessage = async (webhookPayload: any) => {
     channel: "WHATSAPP",
     senderId: senderPhone,
     message: rawText,
+    timestamp: new Date(),
   };
 
   // Step 3: Call the SHARED Booking Service (same function as Web Chat!)

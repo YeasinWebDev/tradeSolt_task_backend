@@ -8,6 +8,7 @@ export type MessageInput = {
   channel: "WEB" | "WHATSAPP";
   senderId: string; // Customer ID or Phone Number
   message: string;
+  timestamp: Date;
 };
 
 /**

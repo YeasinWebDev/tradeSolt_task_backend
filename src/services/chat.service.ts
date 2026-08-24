@@ -1,7 +1,6 @@
 import { prisma } from "../lib/prisma";
 import { MessageInput, processBookingRequest } from "./booking.service";
 
-
 /**
  * CHAT SERVICE (Web Chat)
  * -----------------------
@@ -16,6 +15,7 @@ export const handleWebChatMessage = async (customerId: string, rawMessage: strin
     channel: "WEB",
     senderId: customerId,
     message: rawMessage,
+    timestamp: new Date(),
   };
 
   // Step 2: Get or create active conversation in Prisma
@@ -34,10 +34,11 @@ export const handleWebChatMessage = async (customerId: string, rawMessage: strin
   await prisma.message.create({
     data: {
       conversationId: conversation.id,
-      senderId: customerId,
+      senderId: normalizedInput.senderId,
       senderRole: "CUSTOMER",
-      channel: "WEB",
-      content: rawMessage,
+      channel: normalizedInput.channel,
+      content: normalizedInput.message,
+      createdAt: normalizedInput.timestamp,
     },
   });
 

@@ -8,7 +8,7 @@ import { errorHandler, notFound } from "./middlewares/errorHandler";
 import authRoutes from "./routes/auth.route";
 import { TraderRoutes } from "./routes/trader.route";
 import { chatModuleRoutes } from "./routes/chat.routes";
-import { whatsappModuleRoutes } from "./routes/whatsapp.routes";
+import { whatsappModuleRoutes } from "./modules/whatsapp/whatsapp.routes";
 import { paymentModuleRoutes } from "./routes/payment.route";
 import { stripeWebhookRoutes } from "./routes/stripe.webhook.route";
 import { bookingRoutes } from "./routes/booking.route";
@@ -49,6 +49,7 @@ app.use("/api/v1/trader", TraderRoutes);
 // Modular Chat & WhatsApp Routes
 app.use("/api/v1/chat", chatModuleRoutes);
 app.use("/api/v1/webhooks/whatsapp", whatsappModuleRoutes);
+app.use("/api/webhooks/whatsapp", whatsappModuleRoutes);
 
 // Stripe Payments
 app.use("/api/v1/payments", paymentModuleRoutes);
